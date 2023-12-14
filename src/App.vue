@@ -16,6 +16,8 @@
       <button @click="joinRoom">Tham gia phòng</button>
       <input v-model="newMessage" placeholder="Nhập tin nhắn" />
       <button @click="sendMessage">Gửi</button>
+
+      <button @click="testClick">Test</button>
     </div>
   </div>
 </template>
@@ -51,11 +53,23 @@ export default {
       newMessage.value = ''
     }
 
+    const testClick = () => {
+      //2
+      // socket.emit('testOnce', { socketId: socket.id, value: '1' })
+
+      socket.emit('send-to-client', {
+        socketId: socket.id,
+        dstAccountId: 'batdau'
+      })
+    }
+
     onMounted(() => {
       socket.on('connect', () => {
         console.log('Connected to the socket server')
       })
 
+      // TEST - start
+      //1
       // socket.on('server-message', (msg) => {
       //   message.value = msg
       // })
@@ -63,8 +77,14 @@ export default {
       //   valueServer.value = msg
       // })
 
+      socket.on('message-from-server', (message) => {
+        console.log('message-from-server', message)
+      })
+
+      // TEST - start
+
       socket.on('receiveMessage', (data) => {
-        messages.value.push(data.name+ ": "+ data.newMessage)
+        messages.value.push(data.name + ': ' + data.newMessage)
       })
     })
 
@@ -80,7 +100,9 @@ export default {
       newMessage,
       messages,
       joinRoom,
-      sendMessage
+      sendMessage,
+
+      testClick
     }
   }
 }
